@@ -72,7 +72,8 @@ optimizations of this compaction algorithm.
 
 PebblesDB is also a key-value store based on HyperLevelDB, but it further
 further improves latency by using a fragmented log-structured merge tree which
-is meant to reduce write amplification.
+is meant to reduce write amplification and reduce write latencies by keeping
+the FLSM only semi-sorted (sorted between guards).
 
 %------------------------------------------------------------------------------
 
