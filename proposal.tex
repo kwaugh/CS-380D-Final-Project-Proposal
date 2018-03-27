@@ -93,10 +93,11 @@ CockroachDB source to support this. This will make it easier in the future to
 evaluate other key-value stores as storage backends for CockroachDB.
 
 Additionally, because PebblesDB and RocksDB do not share the same API, we will
-write a shim layer to perform API translation. RocksDB was built on work from
-LevelDB, so it is likely that they share a comparable API, but we have not yet
-evaluated their API compatibility.  This approach appears to be more
-straightforward than modifying CockroachDB directly to use the new API.
+write a shim layer to perform API translation. RocksDB and PebblesDB were both
+built on work from LevelDB, so it is likely that they share a comparable API,
+but we have not yet evaluated their API compatibility.  This approach appears
+to be more straightforward than modifying CockroachDB directly to use the new
+API.
 
 Finally, we will try to optimize PebblesDB or explore the impact of alternate
 configurations for PebblesDB to utilize its performance gains over RocksDB to
