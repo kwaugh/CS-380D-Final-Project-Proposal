@@ -19,8 +19,6 @@
 \def\cvprPaperID{****} % *** Enter the CVPR Paper ID here
 \def\httilde{\mbox{\tt\raisebox{-.5ex}{\symbol{126}}}}
 
-% Pages are numbered in submission mode, and unnumbered in camera-ready
-%\ifcvprfinal\pagestyle{empty}\fi
 \setcounter{page}{1}
 \begin{document}
 
@@ -30,11 +28,6 @@
 \author{Keivaun Waugh\\
 University of Texas at Austin\\
 {\tt\small keivaunwaugh@gmail.com}
-% For a paper whose authors are all at the same institution,
-% omit the following lines up until the closing ``}''.
-% Additional authors and addresses can be added with ``\and'',
-% just like the second author.
-% To save space, use either the email address or home page, not both
 \and
 Paul Choi\\
 University of Texas at Austin\\
@@ -46,25 +39,24 @@ University of Texas at Austin\\
 }
 
 \maketitle
-%\thispagestyle{empty}
 
-%%%%%%%%% ABSTRACT
 \begin{abstract}
-    In this project, we aim to evluate the performance of CockroachDB on top of
+    In this project, we aim to evaluate the performance of CockroachDB on top of
     PebblesDB. The open source version of CockroachDB currently available is
     built on top of RocksDB. PebblesDB is a key-value store developed at UT
-    that has some performance tradeoffs with RocksDB, with its main
+    that has some performance trade-offs with RocksDB, with its main
     contribution being its faster write performance. In addition to measuring
     the performance change, we will investigate what changes, if any, need to
     be made to PebblesDB to increase the performance of CockroachDB.
 \end{abstract}
 
-%%%%%%%%% BODY TEXT
 \section{Introduction}
+CockroachDB is a distributed SQL database with strong consistency guarantees. CockroachDB offers many enhancements on top of a traditional key-value store including replication and recovery as well as other standard features that are provided by a database frontend. By replacing RocksDB, the current key-value store base that CockroachDB builds on top of, with PebblesDB, we aim to see if the performance increases that PebblesDB brings can also be brought to CockroachDB in a distributed setting.
 
 %------------------------------------------------------------------------------
 
 \section{Technical Plan}
+Our contributions will be two-fold. Because CockroachDB does not have a clear separation of logic between its use of RocksDB as a key-value store and its other functions, we will evaluate the practicality of refactoring the CockroachDB repository to allow for a clear separation. This will make it easier in the future to evaluate other key-value stores as bases under CockroachDB. Additionally, because PebblesDB and RocksDB do not share the same API (PebblesDB shares an interface with LevelDB, however), we will write a shim layer to perform API translation. RocksDB was built on work from LevelDB, so it is likely that they share a comparable API, but we have not yet evaluated their API compatibility. This approach appears to be more straightforward than modifying CockroachDB directly to use the new API.
 
 %------------------------------------------------------------------------------
 
