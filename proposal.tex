@@ -56,8 +56,8 @@ CockroachDB offers many enhancements on top of a traditional key-value store
 including replication and recovery as well as other standard features that are
 provided by a database frontend. By replacing RocksDB, the current key-value
 store base that CockroachDB builds on top of, with PebblesDB, we aim to see if
-the performance increases that PebblesDB brings can also be brought to
-CockroachDB in a distributed setting.
+the performance increases that PebblesDB brings can also apply to CockroachDB
+in a distributed setting.
 
 RocksDB is a key-value store built using a log-structured merge tree, which
 exploits the relatively higher speed of sequential disk I/O by making writes to
@@ -71,9 +71,9 @@ RocksDB is based) over the original BigTable LSM implementation are chiefly
 optimizations of this compaction algorithm.
 
 PebblesDB is also a key-value store based on HyperLevelDB, but it further
-further improves latency by using a fragmented log-structured merge tree which
-is meant to reduce write amplification and reduce write latencies by keeping
-the FLSM only semi-sorted (sorted between guards).
+improves latency by using a fragmented log-structured merge tree which is meant
+to reduce write amplification and reduce write latencies by keeping the FLSM
+only semi-sorted (sorted between guards).
 
 %------------------------------------------------------------------------------
 
@@ -108,7 +108,7 @@ investigate any differences in performance on write-, update-, read-, and
 delete-heavy workloads as well as write-amplification we find and reason about
 their causes. We will also use these benchmarks to measure the performance
 improvements we achieve with any optimizations we might make on CockroachDB or
-the underlying.
+the underlying KV store.
 
 \section{Materials}
 In order to perform a thorough evaluation, we will need access to multiple
