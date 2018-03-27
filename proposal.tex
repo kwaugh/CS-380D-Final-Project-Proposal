@@ -27,7 +27,7 @@
 
 \author{Keivaun Waugh\\
 University of Texas at Austin\\
-{\tt\small keivaunwaugh@gmail.com}
+{\tt\small keivaunwaugh@utexas.com}
 \and
 Paul Choi\\
 University of Texas at Austin\\
@@ -64,7 +64,10 @@ Finally, we will try to optimize PebblesDB to make CockroachDB work faster on to
 %------------------------------------------------------------------------------
 
 \section{Evaluation Plan}
-It will be essential in our evaluation not just to measure CockroachDB's performance on top of PebblesDB, but also to compare it to its performance on top of RocksDB. In order to do so, we will find out which benchmarks are commonly used to evaluate database performance and run them on both systems. We will take care to investigate any differences in performance on write-, update-, read-, and delete-heavy workloads we find and reason about their causes. We will also use these benchmarks to measure the performance improvements we achieve with any optimizations we might make on CockroachDB.
+It will be essential in our evaluation not just to measure CockroachDB's performance on top of PebblesDB, but also to compare it to its performance on top of RocksDB. In order to do so, we will use the widely used Yahoo! Cloud Serving Benchmark (YCBM). We will also look for other benchmarks that are commonly used to evaluate database performance and run them on both systems if we find that they address an area which YCBM does not. We will take care to investigate any differences in performance on write-, update-, read-, and delete-heavy workloads as well as write-amplification. We find and reason about their causes. We will also use these benchmarks to measure the performance improvements we achieve with any optimizations we might make on CockroachDB or the underlying.
+
+\section{Materials}
+In order to perform a thorough evaluation, we will need access to multiple machines with SSDs to test the distributed performance of CockroachDB. SSDs are required since RocksDB and PebblesDB attempt to optimize their writes for SSDs since their write granularity is more coarse than that of an HDD. We would like to explore the use of either existing test machines in the UT systems lab or machines on a cloud hosting provider possibly using credits donated to the class by Google, Amazon, etc.
 
 %------------------------------------------------------------------------------
 
