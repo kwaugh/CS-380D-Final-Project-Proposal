@@ -1,0 +1,75 @@
+\documentclass[10pt,twocolumn,letterpaper]{article}
+
+\usepackage{cvpr}
+\usepackage{times}
+\usepackage{epsfig}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+% Include other packages here, before hyperref.
+
+% If you comment hyperref and then uncomment it, you should delete
+% egpaper.aux before re-running latex.  (Or just hit 'q' on the first latex
+% run, let it finish, and you should be clear).
+\usepackage[breaklinks=true,bookmarks=false]{hyperref}
+
+\cvprfinalcopy
+
+\def\cvprPaperID{****} % *** Enter the CVPR Paper ID here
+\def\httilde{\mbox{\tt\raisebox{-.5ex}{\symbol{126}}}}
+
+% Pages are numbered in submission mode, and unnumbered in camera-ready
+%\ifcvprfinal\pagestyle{empty}\fi
+\setcounter{page}{1}
+\begin{document}
+
+%%%%%%%%% TITLE
+\title{CS 380D Distributed Systems Final Project Proposal}
+
+\author{Keivaun Waugh\\
+University of Texas at Austin\\
+{\tt\small keivaunwaugh@gmail.com}
+% For a paper whose authors are all at the same institution,
+% omit the following lines up until the closing ``}''.
+% Additional authors and addresses can be added with ``\and'',
+% just like the second author.
+% To save space, use either the email address or home page, not both
+\and
+Paul Choi\\
+University of Texas at Austin\\
+{\tt\small choipaul96@gmail.com}
+\and
+Joseph Bridgwater\\
+University of Texas at Austin\\
+{\tt\small jojo.bridgwater@gmail.com}
+}
+
+\maketitle
+%\thispagestyle{empty}
+
+%%%%%%%%% ABSTRACT
+\begin{abstract}
+    In this project, we aim to evluate the performance of CockroachDB on top of
+    PebblesDB. The open source version of CockroachDB currently available is
+    built on top of RocksDB. PebblesDB is a key-value store developed at UT
+    that has some performance tradeoffs with RocksDB, with its main
+    contribution being its faster write performance. In addition to measuring
+    the performance change, we will investigate what changes, if any, need to
+    be made to PebblesDB to increase the performance of CockroachDB.
+\end{abstract}
+
+%%%%%%%%% BODY TEXT
+\section{Introduction}
+
+%------------------------------------------------------------------------------
+
+\section{Technical Plan}
+
+%------------------------------------------------------------------------------
+
+\section{Evaluation Plan}
+
+%------------------------------------------------------------------------------
+
+\end{document}

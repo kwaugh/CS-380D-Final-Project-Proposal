@@ -1,0 +1,14 @@
+<<<<<<< 660d1082fe507b9fa8899786ae86548a7b7f4f9c
+*.beam
+*.swp
+*.swo
+*.vim
+*.dump
+ebin/
+test_output.txt
+=======
+proposal.aux
+proposal.log
+proposal.pdf
+
+>>>>>>> Formatting and abstract of proposal done.
