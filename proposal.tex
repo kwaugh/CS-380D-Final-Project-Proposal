@@ -33,9 +33,9 @@ Paul Choi\\
 University of Texas at Austin\\
 {\tt\small choipaul96@gmail.com}
 \and
-Joseph Bridgwater\\
+Jo Bridgwater\\
 University of Texas at Austin\\
-{\tt\small jojo.bridgwater@gmail.com}
+{\tt\small jobridgwater@utexas.edu}
 }
 
 \maketitle
@@ -61,6 +61,7 @@ Our contributions will be two-fold. Because CockroachDB does not have a clear se
 %------------------------------------------------------------------------------
 
 \section{Evaluation Plan}
+It will be essential in our evaluation not just to measure CockroachDB's performance on top of PebblesDB, but also to compare it to its performance on top of RocksDB. In order to do so, we will find out which benchmarks are commonly used to evaluate database performance and run them on both systems. We will take care to investigate any differences in performance on write-, update-, read-, and delete-heavy workloads we find and reason about their causes. We will also use these benchmarks to measure the performance improvements we achieve with any optimizations we might make on CockroachDB.
 
 %------------------------------------------------------------------------------
 
