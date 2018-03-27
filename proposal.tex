@@ -47,7 +47,8 @@ University of Texas at Austin\\
     that has some performance trade-offs with RocksDB, with its main
     contribution being its faster write performance. In addition to measuring
     the performance change, we will investigate what changes, if any, need to
-    be made to PebblesDB to increase the performance of CockroachDB.
+    be made to PebblesDB or its configuration to increase the performance of
+    CockroachDB.
 \end{abstract}
 
 \section{Introduction}
@@ -55,69 +56,75 @@ CockroachDB is a distributed SQL database with strong consistency guarantees.
 CockroachDB offers many enhancements on top of a traditional key-value store
 including replication and recovery as well as other standard features that are
 provided by a database frontend. By replacing RocksDB, the current key-value
-store base that CockroachDB builds on top of, with PebblesDB, we aim to see if
-the performance increases that PebblesDB brings can also apply to CockroachDB
-in a distributed setting.
+store that CockroachDB uses as a storage backend, with PebblesDB, we aim to see
+if the performance increases that PebblesDB brings can also apply to
+CockroachDB in a distributed setting.
 
-RocksDB is a key-value store built using a log-structured merge tree, which
-exploits the relatively higher speed of sequential disk I/O by making writes to
-disk append-only. This is achieved using sstables, which accumulate sorted data
-in memory before being written to files on the disk. This system has low write
-latency at the cost of higher read latency, since reads often have to search
-through files to reach their target key. This downside is alleviated somewhat
-by periodically compacting these files into fewer, larger files (which has
-overhead of its own). The improvements of LevelDB and HyperLevelDB (upon which
-RocksDB is based) over the original BigTable LSM implementation are chiefly
-optimizations of this compaction algorithm.
+RocksDB is a key-value store based on LevelDB built using a log-structured
+merge tree, which exploits the relatively higher speed of sequential disk I/O
+by making writes to disk append-only rather than random. This is achieved by
+batching writes within an in-memory store and periodically flushing these
+writes to files stored on disk called sstables. Sstables are organized in a
+pyramid-like structure called levels. Keys are sorted within each sstable, and
+non-overlapping across all sstables in each level. Reads search for the target
+key starting from the first level and moving downward. This system has low
+write latency at the cost of higher read latency, since reads may have to
+search through multiple levels to reach the target key. This downside is
+alleviated somewhat by periodically compacting the sstables within a level into
+larger files in the next level.
 
-PebblesDB is also a key-value store based on HyperLevelDB, but it further
-improves latency by using a fragmented log-structured merge tree which is meant
-to reduce write amplification and reduce write latencies by keeping the FLSM
-only semi-sorted (sorted between guards).
+PebblesDB is also a key-value store based on LevelDB, but it decreases
+write-amplification and increases write throughput by using a fragmented
+log-structured merge tree (FLSM). In FLSMs, groups of sstables in each level
+are allowed to have overlapping key spaces within each group. When managed in
+an intelligent manner, this can eliminate some of the redundancy in writing
+keys from one level to the next during compaction in traditional LSTMs.
+However, it adds some read latency since a read may have to read multiple
+sstables within a group in a given level to find the key, as key ranges of the
+sstables may overlap.
 
 %------------------------------------------------------------------------------
 
 \section{Technical Plan}
 Our contributions will be three-fold. Because CockroachDB does not have a clear
-separation of logic between its use of RocksDB as a key-value store and its
-other functions, we will evaluate the practicality of refactoring the
-CockroachDB repository to allow for a clear separation. This will make it
-easier in the future to evaluate other key-value stores as bases under
-CockroachDB. Additionally, because PebblesDB and RocksDB do not share the same
-API (PebblesDB shares an interface with LevelDB, however), we will write a shim
-layer to perform API translation. RocksDB was built on work from LevelDB, so it
-is likely that they share a comparable API, but we have not yet evaluated their
-API compatibility. This approach appears to be more straightforward than
-modifying CockroachDB directly to use the new API.
+separation of logic between its use of RocksDB as a storage backend versus any
+abstract key-value store, we will evaluate the practicality of refactoring the
+CockroachDB source to support this. This will make it easier in the future to
+evaluate other key-value stores as storage backends for CockroachDB.
 
-Finally, we will try to optimize PebblesDB to make CockroachDB work faster on
-top of it. In the case where this involves smaller changes, we will submit them
-as a pull request to the PebblesDB project. If larger changes are forthcoming,
-we will create a fork of PebblesDB for the new version resulting from them.
+Additionally, because PebblesDB and RocksDB do not share the same API, we will
+write a shim layer to perform API translation. RocksDB was built on work from
+LevelDB, so it is likely that they share a comparable API, but we have not yet
+evaluated their API compatibility.  This approach appears to be more
+straightforward than modifying CockroachDB directly to use the new API.
+
+Finally, we will try to optimize PebblesDB or explore the impact of alternate
+configurations for PebblesDB to utilize its performance gains over RocksDB to
+find similar performance gains for CockroachDB.
 
 %------------------------------------------------------------------------------
 
 \section{Evaluation Plan}
-It will be essential in our evaluation not just to measure CockroachDB's
-performance on top of PebblesDB, but also to compare it to its performance on
-top of RocksDB. In order to do so, we will use the widely used Yahoo! Cloud
-Serving Benchmark (YCBM). We will also look for other benchmarks that are
-commonly used to evaluate database performance and run them on both systems if
-we find that they address an area which YCBM does not. We will take care to
-investigate any differences in performance on write-, update-, read-, and
-delete-heavy workloads as well as write-amplification we find and reason about
-their causes. We will also use these benchmarks to measure the performance
-improvements we achieve with any optimizations we might make on CockroachDB or
-the underlying KV store.
+In order to evaluate CockroachDB's performance when using PebblesDB versus
+RocksDB, we will use the widely used Yahoo! Cloud Serving Benchmark (YCSB). We
+will also look for other benchmarks that are commonly used to evaluate database
+performance and run them on both systems if we find that they address an area
+which YCSB does not. We will investigate any differences in performance on
+write-, update-, read-, and delete-heavy workloads.
+
+In addition to evaluating performance after successfully integrating PebblesDB
+as the storage backend, we will explore changes which can be made to PebblesDB
+or CockroachDB which yield further improvement, and quantify the difference in
+performance.
 
 \section{Materials}
 In order to perform a thorough evaluation, we will need access to multiple
-machines with SSDs to test the distributed performance of CockroachDB. SSDs are
-required since RocksDB and PebblesDB attempt to optimize their writes for SSDs
-since their write granularity is more coarse than that of an HDD. We would like
-to explore the use of either existing test machines in the UT systems lab or
-machines on a cloud hosting provider possibly using credits donated to the
-class by Google, Amazon, etc.
+machines with SSDs to test the distributed performance of CockroachDB. We
+require SSDs rather than hard drives in order to properly compare performance
+between RocksDB and PebblesDB, as RocksDB is optimized for flash storage. We
+would like to explore the use of either existing test machines in the UT
+systems lab or machines on a cloud hosting provider possibly using credits
+provided to the class by Google, Amazon, etc.
 
 %------------------------------------------------------------------------------
 
